@@ -1,9 +1,3 @@
-enum ActionKind {
-    Walking,
-    Idle,
-    Jumping,
-    walk_right
-}
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     Michael.x += -5
 })
@@ -19,6 +13,12 @@ let cake: Sprite = null
 let burger: Sprite = null
 let apple: Sprite = null
 let Michael: Sprite = null
+class ActionKind {
+    static Walking = 0
+    static Idle = 1
+    static Jumping = 2
+    static walk_right = 3
+}
 scene.setBackgroundImage(img`
     dddbbbbbbbbbbbbbdddbbbbbbbbbbbbbdddbbbbbbbbbbbbbdddbbbbbbbbbbbbbdddbbbbbbbbbbbbbdddbbbbbbbbbbbbbdddbbbbbbbbbbbbbddcdddddddddddddddddddddddcbbbbbdddddddddddddddd
     ddddbbbbbbbbbbbdddddbbbbbbbbbbbdddddbbbbbbbbbbbdddddbbbbbbbbbbbdddddbbbbbbbbbbbdddddbbbbbbbbbbbdddddbbbbbbbbbbbdddcdddddddddddddddddddddddcbbbbddddddddddddddddd
@@ -145,7 +145,7 @@ tiles.setTilemap(tilemap`level2`)
 game.showLongText(" Welcome to food fall !", DialogLayout.Top)
 game.showLongText("Your objective is to catch as many falling food items in 60 seconds. Good luck!", DialogLayout.Top)
 info.setScore(0)
-let speed = 20
+let speed = 10
 Michael = sprites.create(img`
     ..................
     ..................
@@ -189,6 +189,16 @@ donut,
 pizza,
 strawberry,
 toco
+]
+let list = [
+assets.image`apple`,
+assets.image`burger`,
+assets.image`cake`,
+assets.image`chicken`,
+assets.image`donut`,
+assets.image`pizza`,
+assets.image`strawberry`,
+assets.image`taco`
 ]
 game.onUpdateInterval(5000, function () {
     apple = sprites.createProjectileFromSide(img`
