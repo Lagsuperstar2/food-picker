@@ -1,17 +1,26 @@
+function foodFalling () {
+    if (true) {
+        falling = sprites.create(list[randint(0, list.length - 0)], SpriteKind.Projectile)
+    }
+    falling.y = -10
+    falling.x = randint(0, 160)
+    falling.vy = 20
+}
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     Michael.x += -5
+})
+info.onCountdownEnd(function () {
+    game.over(true, effects.confetti)
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     Michael.x += 5
 })
-let toco: Sprite = null
-let strawberry: Sprite = null
-let pizza: Sprite = null
-let donut: Sprite = null
-let chicken: Sprite = null
-let cake: Sprite = null
-let burger: Sprite = null
-let apple: Sprite = null
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    info.changeScoreBy(1)
+})
+let list: Image[] = []
+let falling: Sprite = null
 let Michael: Sprite = null
 class ActionKind {
     static Walking = 0
@@ -145,7 +154,6 @@ tiles.setTilemap(tilemap`level2`)
 game.showLongText(" Welcome to food fall !", DialogLayout.Top)
 game.showLongText("Your objective is to catch as many falling food items in 60 seconds. Good luck!", DialogLayout.Top)
 info.setScore(0)
-let speed = 10
 Michael = sprites.create(img`
     ..................
     ..................
@@ -176,21 +184,28 @@ Michael = sprites.create(img`
     ......ffffff......
     ......ff..ff......
     `, SpriteKind.Player)
+falling = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Projectile)
 Michael.setPosition(80, 103)
 Michael.setFlag(SpriteFlag.StayInScreen, true)
 info.startCountdown(60)
-let seconds = 60
-let foodd = [
-apple,
-burger,
-cake,
-chicken,
-donut,
-pizza,
-strawberry,
-toco
-]
-let list = [
+list = [
 assets.image`apple`,
 assets.image`burger`,
 assets.image`cake`,
@@ -200,158 +215,6 @@ assets.image`pizza`,
 assets.image`strawberry`,
 assets.image`taco`
 ]
-game.onUpdateInterval(5000, function () {
-    apple = sprites.createProjectileFromSide(img`
-        . . . . . . . e c 7 . . . . . . 
-        . . . . e e e c 7 7 e e . . . . 
-        . . c e e e e c 7 e 2 2 e e . . 
-        . c e e e e e c 6 e e 2 2 2 e . 
-        . c e e e 2 e c c 2 4 5 4 2 e . 
-        c e e e 2 2 2 2 2 2 4 5 5 2 2 e 
-        c e e 2 2 2 2 2 2 2 2 4 4 2 2 e 
-        c e e 2 2 2 2 2 2 2 2 2 2 2 2 e 
-        c e e 2 2 2 2 2 2 2 2 2 2 2 2 e 
-        c e e 2 2 2 2 2 2 2 2 2 2 2 2 e 
-        c e e 2 2 2 2 2 2 2 2 2 2 4 2 e 
-        . e e e 2 2 2 2 2 2 2 2 2 4 e . 
-        . 2 e e 2 2 2 2 2 2 2 2 4 2 e . 
-        . . 2 e e 2 2 2 2 2 4 4 2 e . . 
-        . . . 2 2 e e 4 4 4 2 e e . . . 
-        . . . . . 2 2 e e e e . . . . . 
-        `, 50, speed)
-    apple.y = randint(0, 160)
-    burger = sprites.createProjectileFromSide(img`
-        . . . . c c c b b b b b . . . . 
-        . . c c b 4 4 4 4 4 4 b b b . . 
-        . c c 4 4 4 4 4 5 4 4 4 4 b c . 
-        . e 4 4 4 4 4 4 4 4 4 5 4 4 e . 
-        e b 4 5 4 4 5 4 4 4 4 4 4 4 b c 
-        e b 4 4 4 4 4 4 4 4 4 4 5 4 4 e 
-        e b b 4 4 4 4 4 4 4 4 4 4 4 b e 
-        . e b 4 4 4 4 4 5 4 4 4 4 b e . 
-        8 7 e e b 4 4 4 4 4 4 b e e 6 8 
-        8 7 2 e e e e e e e e e e 2 7 8 
-        e 6 6 2 2 2 2 2 2 2 2 2 2 6 c e 
-        e c 6 7 6 6 7 7 7 6 6 7 6 c c e 
-        e b e 8 8 c c 8 8 c c c 8 e b e 
-        e e b e c c e e e e e c e b e e 
-        . e e b b 4 4 4 4 4 4 4 4 e e . 
-        . . . c c c c c e e e e e . . . 
-        `, 50, speed)
-    burger.x = randint(0, 10)
-    cake = sprites.createProjectileFromSide(img`
-        . . . . . . . . . . b b b . . . 
-        . . . . . . . . b e e 3 3 b . . 
-        . . . . . . b b e 3 2 e 3 a . . 
-        . . . . b b 3 3 e 2 2 e 3 3 a . 
-        . . b b 3 3 3 3 3 e e 3 3 3 a . 
-        b b 3 3 3 3 3 3 3 3 3 3 3 3 3 a 
-        b 3 3 3 d d d d 3 3 3 3 3 d d a 
-        b b b b b b b 3 d d d d d d 3 a 
-        b d 5 5 5 5 d b b b a a a a a a 
-        b 3 d d 5 5 5 5 5 5 5 d d d d a 
-        b 3 3 3 3 3 3 d 5 5 5 d d d d a 
-        b 3 d 5 5 5 3 3 3 3 3 3 b b b a 
-        b b b 3 d 5 5 5 5 5 5 5 d d b a 
-        . . . b b b 3 d 5 5 5 5 d d 3 a 
-        . . . . . . b b b b 3 d d d b a 
-        . . . . . . . . . . b b b a a . 
-        `, 50, speed)
-    cake.x = randint(0, 10)
-    chicken = sprites.createProjectileFromSide(img`
-        . . 2 2 b b b b b . . . . . . . 
-        . 2 b 4 4 4 4 4 4 b . . . . . . 
-        2 2 4 4 4 4 d d 4 4 b . . . . . 
-        2 b 4 4 4 4 4 4 d 4 b . . . . . 
-        2 b 4 4 4 4 4 4 4 d 4 b . . . . 
-        2 b 4 4 4 4 4 4 4 4 4 b . . . . 
-        2 b 4 4 4 4 4 4 4 4 4 e . . . . 
-        2 2 b 4 4 4 4 4 4 4 b e . . . . 
-        . 2 b b b 4 4 4 b b b e . . . . 
-        . . e b b b b b b b e e . . . . 
-        . . . e e b 4 4 b e e e b . . . 
-        . . . . . e e e e e e b d b b . 
-        . . . . . . . . . . . b 1 1 1 b 
-        . . . . . . . . . . . c 1 d d b 
-        . . . . . . . . . . . c 1 b c . 
-        . . . . . . . . . . . . c c . . 
-        `, 50, speed)
-    chicken.x = randint(0, 10)
-    donut = sprites.createProjectileFromSide(img`
-        . . . . . . b b b b a a . . . . 
-        . . . . b b d d d 3 3 3 a a . . 
-        . . . b d d d 3 3 3 3 3 3 a a . 
-        . . b d d 3 3 3 3 3 3 3 3 3 a . 
-        . b 3 d 3 3 3 3 3 b 3 3 3 3 a b 
-        . b 3 3 3 3 3 a a 3 3 3 3 3 a b 
-        b 3 3 3 3 3 a a 3 3 3 3 d a 4 b 
-        b 3 3 3 3 b a 3 3 3 3 3 d a 4 b 
-        b 3 3 3 3 3 3 3 3 3 3 d a 4 4 e 
-        a 3 3 3 3 3 3 3 3 3 d a 4 4 4 e 
-        a 3 3 3 3 3 3 3 d d a 4 4 4 e . 
-        a a 3 3 3 d d d a a 4 4 4 e e . 
-        . e a a a a a a 4 4 4 4 e e . . 
-        . . e e b b 4 4 4 4 b e e . . . 
-        . . . e e e e e e e e . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, 50, speed)
-    donut.x = randint(0, 10)
-    pizza = sprites.createProjectileFromSide(img`
-        . . . . . . b b b b . . . . . . 
-        . . . . . . b 4 4 4 b . . . . . 
-        . . . . . . b b 4 4 4 b . . . . 
-        . . . . . b 4 b b b 4 4 b . . . 
-        . . . . b d 5 5 5 4 b 4 4 b . . 
-        . . . . b 3 2 3 5 5 4 e 4 4 b . 
-        . . . b d 2 2 2 5 7 5 4 e 4 4 e 
-        . . . b 5 3 2 3 5 5 5 5 e e e e 
-        . . b d 7 5 5 5 3 2 3 5 5 e e e 
-        . . b 5 5 5 5 5 2 2 2 5 5 d e e 
-        . b 3 2 3 5 7 5 3 2 3 5 d d e 4 
-        . b 2 2 2 5 5 5 5 5 5 d d e 4 . 
-        b d 3 2 d 5 5 5 d d d 4 4 . . . 
-        b 5 5 5 5 d d 4 4 4 4 . . . . . 
-        4 d d d 4 4 4 . . . . . . . . . 
-        4 4 4 4 . . . . . . . . . . . . 
-        `, 50, speed)
-    pizza.x = randint(0, 10)
-    strawberry = sprites.createProjectileFromSide(img`
-        . . . . . . . 6 . . . . . . . . 
-        . . . . . . 8 6 6 . . . 6 8 . . 
-        . . . e e e 8 8 6 6 . 6 7 8 . . 
-        . . e 2 2 2 2 e 8 6 6 7 6 . . . 
-        . e 2 2 4 4 2 7 7 7 7 7 8 6 . . 
-        . e 2 4 4 2 6 7 7 7 6 7 6 8 8 . 
-        e 2 4 5 2 2 6 7 7 6 2 7 7 6 . . 
-        e 2 4 4 2 2 6 7 6 2 2 6 7 7 6 . 
-        e 2 4 2 2 2 6 6 2 2 2 e 7 7 6 . 
-        e 2 4 2 2 4 2 2 2 4 2 2 e 7 6 . 
-        e 2 4 2 2 2 2 2 2 2 2 2 e c 6 . 
-        e 2 2 2 2 2 2 2 4 e 2 e e c . . 
-        e e 2 e 2 2 4 2 2 e e e c . . . 
-        e e e e 2 e 2 2 e e e c . . . . 
-        e e e 2 e e c e c c c . . . . . 
-        . c c c c c c c . . . . . . . . 
-        `, 50, speed)
-    strawberry.x = randint(0, 10)
-    toco = sprites.createProjectileFromSide(img`
-        . . . . . . . e e e e . . . . . 
-        . . . . . e e 4 5 5 5 e e . . . 
-        . . . . e 4 5 6 2 2 7 6 6 e . . 
-        . . . e 5 6 6 7 2 2 6 4 4 4 e . 
-        . . e 5 2 2 7 6 6 4 5 5 5 5 4 . 
-        . e 5 6 2 2 8 8 5 5 5 5 5 4 5 4 
-        . e 5 6 7 7 8 5 4 5 4 5 5 5 5 4 
-        e 4 5 8 6 6 5 5 5 5 5 5 4 5 5 4 
-        e 5 c e 8 5 5 5 4 5 5 5 5 5 5 4 
-        e 5 c c e 5 4 5 5 5 4 5 5 5 e . 
-        e 5 c c 5 5 5 5 5 5 5 5 4 e . . 
-        e 5 e c 5 4 5 4 5 5 5 e e . . . 
-        e 5 e e 5 5 5 5 5 4 e . . . . . 
-        4 5 4 e 5 5 5 5 e e . . . . . . 
-        . 4 5 4 5 5 4 e . . . . . . . . 
-        . . 4 4 e e e . . . . . . . . . 
-        `, 50, speed)
-    toco.x = randint(0, 10)
-    speed += 5
+game.onUpdateInterval(3200, function () {
+    foodFalling()
 })
